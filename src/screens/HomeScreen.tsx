@@ -1,82 +1,87 @@
-import { Language } from '../types'
-
 interface HomeScreenProps {
   state: {
-    languages: Language[]
-    translations: Record<string, Record<string, string>>
+    images: any[]
+    settings: {
+      quality: number
+      maxWidth: number
+      format: string
+    }
   }
   setState: any
-  onEditor: () => void
+  onStart: () => void
 }
 
-export function HomeScreen({ state, setState, onEditor }: HomeScreenProps) {
-  const totalKeys = Object.values(state.translations)[0] 
-    ? Object.keys(Object.values(state.translations)[0]).length 
-    : 0
-  const totalTranslations = Object.values(state.translations).reduce(
-    (sum, lang) => sum + Object.keys(lang).length, 
-    0
-  )
+export function HomeScreen({ state, setState, onStart }: HomeScreenProps) {
+  const totalSaved = state.images
+    .filter(img => img.status === 'done')
+    .reduce((sum, img) => sum + (img.originalSize - img.optimizedSize), 0)
+
+  const formatBytes = (bytes: number) => {
+    if (bytes === 0) return '0 B'
+    const k = 1024
+    const sizes = ['B', 'KB', 'MB', 'GB']
+    const i = Math.floor(Math.log(bytes) / Math.log(k))
+    return parseFloat((bytes / Math.pow(k, i)).toFixed(1)) + ' ' + sizes[i]
+  }
 
   return (
     <div className="home-screen">
       <header className="header">
         <div className="logo">
-          <span className="logo-icon">🌐</span>
-          <h1>Framer i18n</h1>
+          <span className="logo-icon">🖼️</span>
+          <h1>Image Optimizer</h1>
         </div>
-        <p className="tagline">Localization made simple</p>
+        <p className="tagline">Compress & optimize images for better performance</p>
       </header>
 
       <div className="stats">
         <div className="stat-card">
-          <div className="stat-value">{state.languages.length}</div>
-          <div className="stat-label">Languages</div>
+          <div className="stat-value">{state.images.length}</div>
+          <div className="stat-label">Images</div>
         </div>
         <div className="stat-card">
-          <div className="stat-value">{totalKeys}</div>
-          <div className="stat-label">Keys</div>
+          <div className="stat-value">{state.images.filter(i => i.status === 'done').length}</div>
+          <div className="stat-label">Optimized</div>
         </div>
         <div className="stat-card">
-          <div className="stat-value">{totalTranslations}</div>
-          <div className="stat-label">Translations</div>
+          <div className="stat-value highlight">{formatBytes(totalSaved)}</div>
+          <div className="stat-label">Saved</div>
         </div>
       </div>
 
-      <div className="languages-section">
-        <h2>Languages</h2>
-        <div className="language-chips">
-          {state.languages.map((lang) => (
-            <div key={lang.code} className="language-chip">
-              <span className="flag">{lang.flag}</span>
-              <span className="name">{lang.name}</span>
-              <span className="code">({lang.code})</span>
-            </div>
-          ))}
-          <button className="add-btn">+ Add</button>
+      <div className="settings-preview">
+        <h2>Current Settings</h2>
+        <div className="setting-items">
+          <div className="setting-item">
+            <span className="setting-label">Quality</span>
+            <span className="setting-value">{state.settings.quality}%</span>
+          </div>
+          <div className="setting-item">
+            <span className="setting-label">Max Width</span>
+            <span className="setting-value">{state.settings.maxWidth}px</span>
+          </div>
+          <div className="setting-item">
+            <span className="setting-label">Format</span>
+            <span className="setting-value">{state.settings.format.toUpperCase()}</span>
+          </div>
         </div>
+      </div>
+
+      <div className="features">
+        <h2>Features</h2>
+        <ul>
+          <li>⚡ Batch optimize multiple images</li>
+          <li>🎨 Convert to WebP, JPEG, or PNG</li>
+          <li>📐 Resize to max dimensions</li>
+          <li>📊 See before/after file sizes</li>
+          <li>🔄 Lossy & lossless compression</li>
+        </ul>
       </div>
 
       <div className="actions">
-        <button className="primary-btn" onClick={onEditor}>
-          Edit Translations
+        <button className="primary-btn" onClick={onStart}>
+          Start Optimizing
         </button>
-        <button className="secondary-btn">
-          Export JSON
-        </button>
-        <button className="secondary-btn">
-          Import JSON
-        </button>
-      </div>
-
-      <div className="quick-start">
-        <h3>Quick Start</h3>
-        <ol>
-          <li>Add languages you need to support</li>
-          <li>Create translation keys for your text</li>
-          <li>Fill in translations for each language</li>
-          <li>Export and use in your Framer project</li>
-        </ol>
       </div>
     </div>
   )
