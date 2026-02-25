@@ -1,6 +1,6 @@
 {
   "apiVersion": 1,
-  "id": "image-optimizer",
+  "id": "imgopt",
   "name": "Image Optimizer",
   "description": "Compress, resize, and optimize images in your Framer projects",
   "icon": "image",
