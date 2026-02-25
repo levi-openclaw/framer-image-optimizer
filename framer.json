@@ -3,7 +3,8 @@
   "id": "imgopt",
   "name": "Image Optimizer",
   "description": "Compress, resize, and optimize images in your Framer projects",
-  "icon": "image",
+  "modes": ["canvas"],
+  "icon": "/icon.svg",
   "categories": ["performance", "developer-tools"],
   "version": "0.1.0",
   "author": {
